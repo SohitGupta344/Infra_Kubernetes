@@ -1,0 +1,209 @@
+# name: Dev Terraform Workflow
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+#   pull_request:
+#     branches:
+#       - main
+      
+#   workflow_dispatch:
+  
+
+# permissions:
+#   id-token: write
+#   contents: read
+
+# env:
+#   TF_VERSION: ${{ vars.TF_VERSION }}
+#   WORKING_DIRECTORY: ${{ vars.WORKING_DIRECTORY }}
+
+# jobs:
+
+# ############################################################
+# # Terraform PLAN
+# ############################################################
+
+#   terraform-plan:
+
+#     name: Terraform Init & Plan (DEV)
+
+#     runs-on: self-hosted
+
+#     steps:
+
+#       ######################################################
+#       # Checkout
+#       ######################################################
+
+#       - name: Checkout Repository
+#         uses: actions/checkout@v5
+
+#       ######################################################
+#       # Azure Login (OIDC)
+#       ######################################################
+
+#       - name: Azure Login (OIDC)
+#         uses: azure/login@v2
+#         with:
+#           client-id: ${{ secrets.AZURE_CLIENT_ID }}
+#           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+#           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+#       ######################################################
+#       # Verify Azure Login
+#       ######################################################
+
+#       - name: Verify Azure Login
+#         shell: pwsh
+#         run: |
+#           az account show
+#           az account list -o table
+
+#       ######################################################
+#       # Setup Terraform
+#       ######################################################
+
+#       - name: Setup Terraform
+#         uses: hashicorp/setup-terraform@v3
+#         with:
+#           terraform_version: ${{ env.TF_VERSION }}
+
+#       ######################################################
+#       # Terraform Version
+#       ######################################################
+
+#       - name: Terraform Version
+#         shell: pwsh
+#         run: terraform version
+
+#       ######################################################
+#       # Terraform Format
+#       ######################################################
+
+#       - name: Terraform Format
+#         shell: pwsh
+#         working-directory: ${{ env.WORKING_DIRECTORY }}
+#         run: terraform fmt -check
+#         continue-on-error: true
+
+#       ######################################################
+#       # Terraform Init
+#       ######################################################
+
+#       - name: Terraform Init
+#         shell: pwsh
+#         working-directory: ${{ env.WORKING_DIRECTORY }}
+#         run: terraform init -input=false
+
+#       ######################################################
+#       # Terraform Validate
+#       ######################################################
+
+#       - name: Terraform Validate
+#         shell: pwsh
+#         working-directory: ${{ env.WORKING_DIRECTORY }}
+#         run: terraform validate
+
+#       ######################################################
+#       # Terraform Plan
+#       ######################################################
+
+#       - name: Terraform Plan
+#         shell: pwsh
+#         working-directory: ${{ env.WORKING_DIRECTORY }}
+#         run: terraform plan -input=false -out=tfplan
+
+#       ######################################################
+#       # Upload Plan Artifact
+#       ######################################################
+
+#       - name: Upload Terraform Plan
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: terraform-plan
+#           path: ${{ env.WORKING_DIRECTORY }}/tfplan
+
+# ############################################################
+# # Terraform APPLY
+# ############################################################
+
+#   terraform-apply:
+
+#     name: Terraform Apply (DEV)
+
+#     needs: terraform-plan
+
+#     runs-on: self-hosted
+
+#     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+#     environment: dev
+
+#     steps:
+
+#       ######################################################
+#       # Checkout
+#       ######################################################
+
+#       - name: Checkout Repository
+#         uses: actions/checkout@v5
+
+#       ######################################################
+#       # Azure Login
+#       ######################################################
+
+#       - name: Azure Login (OIDC)
+#         uses: azure/login@v2
+#         with:
+#           client-id: ${{ secrets.AZURE_CLIENT_ID }}
+#           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+#           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+#       ######################################################
+#       # Setup Terraform
+#       ######################################################
+
+#       - name: Setup Terraform
+#         uses: hashicorp/setup-terraform@v3
+#         with:
+#           terraform_version: ${{ env.TF_VERSION }}
+
+#       ######################################################
+#       # Terraform Init
+#       ######################################################
+
+#       - name: Terraform Init
+#         shell: pwsh
+#         working-directory: ${{ env.WORKING_DIRECTORY }}
+#         run: terraform init -input=false
+
+#       ######################################################
+#       # Download Plan
+#       ######################################################
+
+#       - name: Download Terraform Plan
+#         uses: actions/download-artifact@v4
+#         with:
+#           name: terraform-plan
+#           path: ${{ env.WORKING_DIRECTORY }}
+
+#       ######################################################
+#       # Terraform Apply
+#       ######################################################
+
+#       - name: Terraform Apply
+#         shell: pwsh
+#         working-directory: ${{ env.WORKING_DIRECTORY }}
+#         run: terraform apply -input=false -auto-approve tfplan
+
+#       ######################################################
+#       # Terraform Output
+#       ######################################################
+
+#       - name: Terraform Output
+#         shell: pwsh
+#         working-directory: ${{ env.WORKING_DIRECTORY }}
+#         run: terraform output

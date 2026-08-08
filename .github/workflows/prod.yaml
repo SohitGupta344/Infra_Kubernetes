@@ -1,0 +1,77 @@
+# name: "Prod Terraform Workflow"
+
+# on:
+#   pull_request:
+#     branches:
+#       - main
+#   push:
+#     branches:
+#       - main      
+
+# permissions:
+#   id-token: write
+#   contents: read
+  
+# jobs: 
+#   terraform-init-plan:
+#     runs-on: self-hosted
+#     steps: 
+#       - name: Checkout
+#         uses: actions/checkout@v5.0.0
+    
+#       - name: Azure Login
+#         uses: Azure/login@v2.3.0
+#         with:
+#           client-id: 3d4cb9b2-31d4-4781-8fc7-36392e41968a
+#           tenant-id: ea9ca8b6-aa2d-4c4a-904a-cb93fd58a0b9
+#           subscription-id: 86cd11f5-4d26-4e93-bfa9-c0b7b2f44cc9
+            
+#       - name: Terraform fmt
+#         id: fmt
+#         run: terraform fmt -check
+#         continue-on-error: true
+#         working-directory: environments/prod
+        
+#       - name: Terraform Init
+#         id: init
+#         run: terraform init -input=false  
+#         working-directory: environments/prod
+
+#       - name: Terraform Validate
+#         id: validate
+#         run: terraform validate -no-color
+#         working-directory: environments/prod        
+      
+#       - name: Terraform Plan
+#         id: plan
+#         run: terraform plan -no-color -input=false
+#         continue-on-error: true
+#         working-directory: environments/prod    
+        
+#   terraform-apply:    
+#     runs-on: self-hosted
+#     if: github.ref == 'refs/heads/main'
+#     needs: terraform-init-plan
+#     environment: prod
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v5.0.0
+    
+#       - name: Azure Login
+#         uses: Azure/login@v2.3.0
+#         with:
+#           client-id: 3d4cb9b2-31d4-4781-8fc7-36392e41968a
+#           tenant-id: ea9ca8b6-aa2d-4c4a-904a-cb93fd58a0b9
+#           subscription-id: 86cd11f5-4d26-4e93-bfa9-c0b7b2f44cc9   
+          
+#       - name: Terraform Init
+#         id: init
+#         run: terraform init -input=false  
+#         working-directory: environments/prod
+
+#       - name: Terraform Apply
+#         id: apply
+#         run: terraform apply -input=false --auto-approve
+#         continue-on-error: true
+#         working-directory: environments/prod              
+          
