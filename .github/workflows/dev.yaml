@@ -447,8 +447,8 @@ jobs:
     # Add required reviewer there.
     # --------------------------------------------------------
 
-    environment:
-      name: production
+    # environment:
+    #   name: production
 
 
     # --------------------------------------------------------
