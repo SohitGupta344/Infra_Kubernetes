@@ -62,7 +62,7 @@ aks = {
 
 sql_servers = {
   "todoapp-sql" = {
-    sql_server_name = "dev-sqlserver"
+    sql_server_name = "dev-sqlserver-sohit"
     rg_name         = "dev-rg"
     location        = "Central India"
     admin_username  = "sqladminuser"
@@ -83,7 +83,7 @@ sql_databases = {
   "todoapp-db" = {
     sql_db_name     = "dev-db"
     max_size_gb     = 2
-    sql_server_name = "dev-sqlserver"
+    sql_server_name = "dev-sqlserver-sohit"
     rg_name         = "dev-rg"
     tags = {
       Environment = "dev"
