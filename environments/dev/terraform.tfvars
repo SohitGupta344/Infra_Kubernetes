@@ -4,7 +4,7 @@
 
 rgs = {
   "todoapp-rg" = {
-    name     = "todoapp-dev-rg"
+    name     = "dev-rg"
     location = "Central India"
     tags = {
       Environment = "dev"
@@ -20,8 +20,8 @@ rgs = {
 
 acr = {
   "todoapp-acr" = {
-    name                = "todoappacrdev001"
-    resource_group_name = "todoapp-dev-rg"
+    name                = "devacrdev001"
+    resource_group_name = "dev-rg"
     location            = "Central India"
     tags = {
       Environment = "dev"
@@ -37,10 +37,10 @@ acr = {
 
 aks = {
   "todoapp-aks" = {
-    name       = "todoapp-dev-aks"
+    name       = "dev-aks"
     location   = "Central India"
-    rg_name    = "todoapp-dev-rg"
-    dns_prefix = "todoapp-dev"
+    rg_name    = "dev-rg"
+    dns_prefix = "dev-app"
 
     default_node_pool = {
       name       = "default"
@@ -62,8 +62,8 @@ aks = {
 
 sql_servers = {
   "todoapp-sql" = {
-    sql_server_name = "todoapp-dev-sqlserver"
-    rg_name         = "todoapp-dev-rg"
+    sql_server_name = "dev-sqlserver"
+    rg_name         = "dev-rg"
     location        = "Central India"
     admin_username  = "sqladminuser"
     admin_password  = "P@ssw0rd!2026#Secure"
@@ -81,10 +81,10 @@ sql_servers = {
 
 sql_databases = {
   "todoapp-db" = {
-    sql_db_name     = "todoapp-dev-db"
+    sql_db_name     = "dev-db"
     max_size_gb     = 2
-    sql_server_name = "todoapp-dev-sqlserver"
-    rg_name         = "todoapp-dev-rg"
+    sql_server_name = "dev-sqlserver"
+    rg_name         = "dev-rg"
     tags = {
       Environment = "dev"
       Project     = "todoapp"
